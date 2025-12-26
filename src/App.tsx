@@ -190,7 +190,7 @@ export default function App() {
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {/* Optional: Add your CV to /public as CV.pdf and enable this */}
-              <LinkButton href="/CVMadni2.pdf" label="Download CV" variant="primary" />
+              <LinkButton href="/public/CVMadni2.pdf" label="Download CV" variant="primary" />
               <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="primary" />
               <LinkButton href="https://behance.net/wahab-madni" label="Behance" variant="secondary" />
               <LinkButton href="https://github.com/MadniAbdulWahab" label="GitHub" variant="secondary" />
