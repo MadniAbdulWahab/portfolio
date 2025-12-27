@@ -259,16 +259,6 @@ export default function App() {
           />
 
           <ProjectCard
-            title="University Notes Management System (UNMS)"
-            subtitle="Full-stack web app • Final-year project (Django)"
-            description="A centralized platform for students to upload, browse, and download academic notes—organized by department, semester, and subject. Includes authentication, note sharing with anti-abuse controls, user profiles, and an admin dashboard for user management and activity monitoring."
-            tags={["Django", "Python", "Authentication", "CRUD", "Admin Dashboard", "Cloud DB"]}
-            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
-            // Optional: add an image in /public and enable below
-            // screenshotSrc={`${baseUrl}unms.png`}
-          />
-
-          <ProjectCard
             title="UX Case Studies"
             subtitle="Research • Prototyping • Testing"
             description="Wireframes, prototypes, usability testing, and design system work."
@@ -281,6 +271,16 @@ export default function App() {
             subtitle="Internal research platform"
             description="Research platform UI (upload → processing → results) with robust UI states and QA. Screenshots available on request."
             tags={["React", "TypeScript", "REST APIs", "UI States", "QA", "Accessibility"]}
+          />
+
+        <ProjectCard
+            title="University Notes Management System (UNMS)"
+            subtitle="Full-stack web app • Final-year project (Django)"
+            description="A centralized platform for students to upload, browse, and download academic notes—organized by department, semester, and subject. Includes authentication, note sharing with anti-abuse controls, user profiles, and an admin dashboard for user management and activity monitoring."
+            tags={["Django", "Python", "Authentication", "CRUD", "Admin Dashboard", "Cloud DB"]}
+            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
+            // Optional: add an image in /public and enable below
+            // screenshotSrc={`${baseUrl}unms.png`}
           />
         </section>
 
