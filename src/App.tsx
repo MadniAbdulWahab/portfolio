@@ -1,3 +1,5 @@
+import React from "react";
+
 type LinkButtonProps = {
   href: string;
   label: string;
@@ -158,8 +160,12 @@ function ProjectCard({ title, subtitle, description, tags, links = [], screensho
 }
 
 export default function App() {
-  // Base-aware CV link (works on GitHub Pages project site: /portfolio/)
-  const cvHref = `${import.meta.env.BASE_URL}CVMadni2.pdf`;
+  // Base-aware links (work on GitHub Pages project site: /portfolio/)
+  const baseUrl = import.meta.env.BASE_URL;
+  const cvHref = `${baseUrl}CVMadni2.pdf`;
+
+  // Put your image in: public/profile.jpg  (or change filename here)
+  const profileSrc = `${baseUrl}profile.jpeg`;
 
   return (
     <div
@@ -181,27 +187,62 @@ export default function App() {
         }}
       >
         <header style={{ marginBottom: 22 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+          {/* Top section with image on the right */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr auto",
+              gap: 18,
+              alignItems: "start",
+            }}
+          >
             <div>
               <h1 style={{ margin: 0, fontSize: 40, letterSpacing: 0.2, color: "rgba(17,24,39,0.92)" }}>
                 Abdul Wahab Madni
               </h1>
+
               <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.70)", lineHeight: 1.5 }}>
                 Frontend UX Developer — React/TypeScript + Drupal theming (Twig)
               </p>
+
               <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.66)", lineHeight: 1.65, maxWidth: 760 }}>
                 I combine front-end engineering (React, TypeScript, HTML/CSS, API integration) with UX research and design
                 (Figma, usability testing, design systems). I build accessible, performance-minded interfaces and have hands-on
                 Drupal theming experience through multiple Drupal projects.
               </p>
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
+                <LinkButton href={cvHref} label="Download CV" variant="primary" />
+                <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="secondary" />
+                <LinkButton href="https://behance.net/wahab-madni" label="Behance" variant="secondary" />
+                <LinkButton href="https://github.com/MadniAbdulWahab" label="GitHub" variant="secondary" />
+                <LinkButton href="mailto:madniabdulwahab@gmail.com" label="Email" variant="secondary" />
+              </div>
             </div>
 
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <LinkButton href={cvHref} label="Download CV" variant="primary" />
-              <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="secondary" />
-              <LinkButton href="https://behance.net/wahab-madni" label="Behance" variant="secondary" />
-              <LinkButton href="https://github.com/MadniAbdulWahab" label="GitHub" variant="secondary" />
-              <LinkButton href="mailto:madniabdulwahab@gmail.com" label="Email" variant="secondary" />
+            {/* Profile image (top-right) */}
+            <div
+              style={{
+                width: 124,
+                height: 124,
+                borderRadius: 18,
+                overflow: "hidden",
+                border: "1px solid rgba(17,24,39,0.10)",
+                background: "rgba(255,255,255,0.75)",
+                boxShadow: "0 18px 50px rgba(17,24,39,0.12)",
+              }}
+              aria-label="Profile photo"
+            >
+              <img
+                src={profileSrc}
+                alt="Abdul Wahab Madni"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
             </div>
           </div>
         </header>
@@ -214,7 +255,7 @@ export default function App() {
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
             // Optional: add an image in /public and enable below
-            // screenshotSrc={`${import.meta.env.BASE_URL}daily4u.png`}
+            // screenshotSrc={`${baseUrl}daily4u.png`}
           />
 
           <ProjectCard
@@ -246,6 +287,20 @@ export default function App() {
             madniabdulwahab@gmail.com
           </a>
         </footer>
+
+        {/* Mobile responsiveness (no extra CSS file): stack image below on small screens */}
+        <style>
+          {`
+            @media (max-width: 720px) {
+              header > div {
+                grid-template-columns: 1fr !important;
+              }
+              header img {
+                border-radius: 16px !important;
+              }
+            }
+          `}
+        </style>
       </div>
     </div>
   );
