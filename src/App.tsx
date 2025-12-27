@@ -31,10 +31,21 @@ type ProjectCardProps = {
   description: string;
   tags: string[];
   links?: { label: string; href: string }[];
-  screenshotSrc?: string;
+
+  // Teaser thumbnail (cropped) and optional full image link
+  thumbnailSrc?: string;
+  fullImageHref?: string;
 };
 
-function ProjectCard({ title, subtitle, description, tags, links = [], screenshotSrc }: ProjectCardProps) {
+function ProjectCard({
+  title,
+  subtitle,
+  description,
+  tags,
+  links = [],
+  thumbnailSrc,
+  fullImageHref,
+}: ProjectCardProps) {
   return (
     <article className="card">
       <div className="cardHeader">
@@ -50,10 +61,17 @@ function ProjectCard({ title, subtitle, description, tags, links = [], screensho
         </div>
       </div>
 
-      {screenshotSrc ? (
-        <div className="shotWrap">
-          <img className="shot" src={screenshotSrc} alt={`${title} screenshot`} />
-        </div>
+      {thumbnailSrc ? (
+        <a
+          className="thumbWrap"
+          href={fullImageHref || thumbnailSrc}
+          target="_blank"
+          rel="noreferrer"
+          title="Open screenshot"
+        >
+          <img className="thumb" src={thumbnailSrc} alt={`${title} thumbnail`} />
+          <div className="thumbHint">View screenshot ↗</div>
+        </a>
       ) : null}
 
       <p className="cardBody">{description}</p>
@@ -70,12 +88,16 @@ function ProjectCard({ title, subtitle, description, tags, links = [], screensho
 }
 
 export default function App() {
-  // Base-aware links for GitHub Pages project site (/portfolio/)
   const baseUrl = import.meta.env.BASE_URL;
-  const cvHref = `${baseUrl}CVMadni2.pdf`;
 
-  // Put your photo in: public/profile.jpg (or change name here)
+  // Base-aware links for GitHub Pages (/portfolio/)
+  const cvHref = `${baseUrl}CVMadni2.pdf`;
   const profileSrc = `${baseUrl}profile.jpeg`;
+
+  // Put screenshots in /public (full page screenshots are fine)
+  // Example filenames (use your own):
+  const daily4uShot = `${baseUrl}screenshots/home_full.png`;
+  //const unmsShot = `${baseUrl}unms-home.png`;
 
   return (
     <div className="page">
@@ -87,9 +109,7 @@ export default function App() {
               <h1 className="name">Abdul Wahab Madni</h1>
 
               <div className="roleRow">
-                <span className="role">
-                  Frontend UX Developer — React/TypeScript + Drupal theming (Twig)
-                </span>
+                <span className="role">Frontend UX Developer — React/TypeScript + Drupal theming (Twig)</span>
               </div>
 
               <p className="summary">
@@ -119,7 +139,6 @@ export default function App() {
           <p>Selected projects aligned with Frontend + UX + Drupal delivery.</p>
         </div>
 
-        {/* CARDS */}
         <section className="grid">
           <ProjectCard
             title="Daily4U — Drupal Theming (Twig)"
@@ -127,8 +146,9 @@ export default function App() {
             description="January theme customization, Twig templates + preprocess hooks, libraries.yml asset management, and a reproducible DDEV + Composer/Drush workflow."
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
-            // Optional screenshot:
-            screenshotSrc={`${baseUrl}screenshots/home_full.png`}
+            // Teaser screenshot (small strip)
+            thumbnailSrc={daily4uShot}
+            fullImageHref={daily4uShot}
           />
 
           <ProjectCard
@@ -146,20 +166,14 @@ export default function App() {
             tags={["React", "TypeScript", "REST APIs", "UI States", "QA", "Accessibility"]}
           />
 
-          {/* NEW PROJECT */}
           <ProjectCard
             title="University Notes Management System"
             subtitle="Django web app • Auth • Upload/Download • Admin dashboard"
-            description="A web-based centralized platform for university students to upload, organize, search, and download academic notes. Includes user authentication, structured note organization (department/semester/subject), spam/abuse controls, and an admin dashboard for managing users and permissions."
+            description="A centralized platform for students to upload, organize (department/semester/subject), search, and download academic notes. Includes anti-abuse controls and admin management for users and permissions."
             tags={["Django", "Python", "Auth", "CRUD", "Admin", "Upload/Download"]}
-            links={[
-              {
-                label: "Repository",
-                href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem",
-              },
-            ]}
-            // Optional: if you add screenshots to /public later:
-            screenshotSrc={`${baseUrl}unms.png`}
+            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
+            thumbnailSrc={unmsShot}
+            fullImageHref={unmsShot}
           />
         </section>
 
@@ -172,7 +186,6 @@ export default function App() {
         </footer>
       </div>
 
-      {/* Styles kept inside App.tsx for simplicity */}
       <style>{`
         :root{
           --bg1:#f8fafc;
@@ -207,7 +220,6 @@ export default function App() {
           padding: 46px 20px 44px;
         }
 
-        /* HERO */
         .hero{
           background: var(--card);
           border: 1px solid var(--border);
@@ -261,7 +273,6 @@ export default function App() {
           flex-wrap: wrap;
         }
 
-        /* Avatar */
         .avatarWrap{
           width: 132px;
           height: 132px;
@@ -287,7 +298,6 @@ export default function App() {
           display:block;
         }
 
-        /* Section title */
         .sectionTitle{
           margin: 20px 2px 14px;
         }
@@ -304,13 +314,11 @@ export default function App() {
           line-height: 1.6;
         }
 
-        /* Grid */
         .grid{
           display:grid;
           gap: 14px;
         }
 
-        /* Card */
         .card{
           border-radius: 18px;
           padding: 18px;
@@ -347,7 +355,7 @@ export default function App() {
           line-height: 1.4;
         }
         .cardBody{
-          margin: 14px 0 0;
+          margin: 12px 0 0;
           line-height: 1.7;
           color: var(--muted);
         }
@@ -358,7 +366,6 @@ export default function App() {
           flex-wrap: wrap;
         }
 
-        /* Tags */
         .tags{
           display:flex;
           gap: 8px;
@@ -379,7 +386,45 @@ export default function App() {
           white-space: nowrap;
         }
 
-        /* Buttons */
+        /* Thumbnail teaser */
+        .thumbWrap{
+          margin-top: 12px;
+          display: block;
+          position: relative;
+          border-radius: 14px;
+          overflow: hidden;
+          border: 1px solid rgba(15,23,42,0.10);
+          background: rgba(255,255,255,0.80);
+          box-shadow: 0 14px 32px rgba(15,23,42,0.10);
+          text-decoration: none;
+        }
+        .thumb{
+          width: 100%;
+          height: 120px;        /* teaser height */
+          object-fit: cover;    /* crops full-page screenshots nicely */
+          object-position: top; /* keeps the top of the webpage visible */
+          display:block;
+          filter: saturate(1.02);
+          transition: transform 180ms ease, filter 180ms ease;
+        }
+        .thumbHint{
+          position: absolute;
+          right: 10px;
+          bottom: 10px;
+          padding: 6px 10px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 700;
+          color: rgba(15,23,42,0.78);
+          background: rgba(255,255,255,0.85);
+          border: 1px solid rgba(15,23,42,0.10);
+          box-shadow: 0 10px 22px rgba(15,23,42,0.10);
+        }
+        .thumbWrap:hover .thumb{
+          transform: scale(1.02);
+          filter: saturate(1.06);
+        }
+
         .btn{
           display:inline-flex;
           align-items:center;
@@ -424,7 +469,6 @@ export default function App() {
           box-shadow: 0 14px 34px rgba(15,23,42,0.10);
         }
 
-        /* Footer */
         .footer{
           margin-top: 22px;
           color: rgba(15,23,42,0.58);
@@ -443,7 +487,6 @@ export default function App() {
           border-bottom-color: rgba(37,99,235,0.35);
         }
 
-        /* Responsive */
         @media (max-width: 760px){
           .heroGrid{
             grid-template-columns: 1fr;
@@ -454,6 +497,9 @@ export default function App() {
           }
           .name{
             font-size: 38px;
+          }
+          .thumb{
+            height: 110px;
           }
         }
       `}</style>
