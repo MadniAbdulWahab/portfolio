@@ -31,25 +31,14 @@ type ProjectCardProps = {
   description: string;
   tags: string[];
   links?: { label: string; href: string }[];
-
-  // Optional thumbnail teaser + optional full image link
-  thumbnailSrc?: string;
-  fullImageHref?: string;
+  screenshotSrc?: string;
 };
 
-function ProjectCard({
-  title,
-  subtitle,
-  description,
-  tags,
-  links = [],
-  thumbnailSrc,
-  fullImageHref,
-}: ProjectCardProps) {
+function ProjectCard({ title, subtitle, description, tags, links = [], screenshotSrc }: ProjectCardProps) {
   return (
     <article className="card">
       <div className="cardHeader">
-        <div className="cardLeft">
+        <div>
           <h3 className="cardTitle">{title}</h3>
           {subtitle ? <div className="cardSubtitle">{subtitle}</div> : null}
         </div>
@@ -61,18 +50,10 @@ function ProjectCard({
         </div>
       </div>
 
-      {/* Optional teaser screenshot */}
-      {thumbnailSrc ? (
-        <a
-          className="thumbWrap"
-          href={fullImageHref || thumbnailSrc}
-          target="_blank"
-          rel="noreferrer"
-          title="Open screenshot"
-        >
-          <img className="thumb" src={thumbnailSrc} alt={`${title} thumbnail`} />
-          <div className="thumbHint">View screenshot ↗</div>
-        </a>
+      {screenshotSrc ? (
+        <div className="shotWrap">
+          <img className="shot" src={screenshotSrc} alt={`${title} screenshot`} />
+        </div>
       ) : null}
 
       <p className="cardBody">{description}</p>
@@ -89,30 +70,26 @@ function ProjectCard({
 }
 
 export default function App() {
+  // Base-aware links for GitHub Pages project site (/portfolio/)
   const baseUrl = import.meta.env.BASE_URL;
-
-  // Base-aware links for GitHub Pages (/portfolio/)
   const cvHref = `${baseUrl}CVMadni2.pdf`;
+
+  // Put your photo in: public/profile.jpg (or change name here)
   const profileSrc = `${baseUrl}profile.jpeg`;
-
-  // Screenshots are OPTIONAL and OFF by default
-  const SHOW_SCREENSHOTS = false;
-
-  // If you want screenshots later, put files in /public and set SHOW_SCREENSHOTS = true
-  const daily4uShot = `${baseUrl}daily4u.png`;
-  const unmsShot = `${baseUrl}unms-home.png`;
 
   return (
     <div className="page">
       <div className="container">
+        {/* HERO */}
         <header className="hero">
           <div className="heroGrid">
             <div className="heroText">
               <h1 className="name">Abdul Wahab Madni</h1>
 
               <div className="roleRow">
-                {/* IMPORTANT: role pill can wrap now, so no horizontal overflow */}
-                <span className="role">Frontend UX Developer — React/TypeScript + Drupal theming (Twig)</span>
+                <span className="role">
+                  Frontend UX Developer — React/TypeScript + Drupal theming (Twig)
+                </span>
               </div>
 
               <p className="summary">
@@ -136,11 +113,13 @@ export default function App() {
           </div>
         </header>
 
+        {/* SECTION TITLE */}
         <div className="sectionTitle">
           <h2>Featured work</h2>
           <p>Selected projects aligned with Frontend + UX + Drupal delivery.</p>
         </div>
 
+        {/* CARDS */}
         <section className="grid">
           <ProjectCard
             title="Daily4U — Drupal Theming (Twig)"
@@ -148,8 +127,8 @@ export default function App() {
             description="January theme customization, Twig templates + preprocess hooks, libraries.yml asset management, and a reproducible DDEV + Composer/Drush workflow."
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
-            thumbnailSrc={SHOW_SCREENSHOTS ? daily4uShot : undefined}
-            fullImageHref={SHOW_SCREENSHOTS ? daily4uShot : undefined}
+            // Optional screenshot:
+            // screenshotSrc={`${baseUrl}daily4u.png`}
           />
 
           <ProjectCard
@@ -166,16 +145,6 @@ export default function App() {
             description="Research platform UI (upload → processing → results) with robust UI states and QA. Screenshots available on request."
             tags={["React", "TypeScript", "REST APIs", "UI States", "QA", "Accessibility"]}
           />
-
-          <ProjectCard
-            title="University Notes Management System"
-            subtitle="Django web app • Auth • Upload/Download • Admin dashboard"
-            description="A centralized platform for students to upload, organize (department/semester/subject), search, and download academic notes. Includes anti-abuse controls and an admin dashboard for managing users and permissions."
-            tags={["Django", "Python", "Auth", "CRUD", "Admin", "Upload/Download"]}
-            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
-            thumbnailSrc={SHOW_SCREENSHOTS ? unmsShot : undefined}
-            fullImageHref={SHOW_SCREENSHOTS ? unmsShot : undefined}
-          />
         </section>
 
         <footer className="footer">
@@ -187,6 +156,7 @@ export default function App() {
         </footer>
       </div>
 
+      {/* Styles kept inside App.tsx for simplicity */}
       <style>{`
         :root{
           --bg1:#f8fafc;
@@ -205,16 +175,10 @@ export default function App() {
 
         * { box-sizing: border-box; }
         html, body { height: 100%; }
-        body {
-          margin: 0;
-          font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-          color: var(--text);
-          overflow-x: hidden; /* Hard stop: prevents the "zoom out to see everything" problem */
-        }
+        body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--text); }
 
         .page{
           min-height:100vh;
-          overflow-x: hidden;
           background:
             radial-gradient(1200px 700px at 12% -10%, rgba(37,99,235,0.18), transparent 60%),
             radial-gradient(900px 600px at 92% 0%, rgba(16,185,129,0.10), transparent 55%),
@@ -227,6 +191,7 @@ export default function App() {
           padding: 46px 20px 44px;
         }
 
+        /* HERO */
         .hero{
           background: var(--card);
           border: 1px solid var(--border);
@@ -253,12 +218,9 @@ export default function App() {
 
         .roleRow{ margin-top: 10px; }
 
-        /* FIX: allow wrapping so it cannot force horizontal overflow */
         .role{
-          display:inline-block;
-          max-width: 100%;
-          white-space: normal;
-          word-break: break-word;
+          display:inline-flex;
+          align-items:center;
           padding: 8px 12px;
           border-radius: 999px;
           background: rgba(37,99,235,0.08);
@@ -266,7 +228,7 @@ export default function App() {
           color: rgba(15,23,42,0.78);
           font-weight: 650;
           font-size: 13px;
-          line-height: 1.3;
+          line-height: 1;
         }
 
         .summary{
@@ -283,6 +245,7 @@ export default function App() {
           flex-wrap: wrap;
         }
 
+        /* Avatar */
         .avatarWrap{
           width: 132px;
           height: 132px;
@@ -308,6 +271,7 @@ export default function App() {
           display:block;
         }
 
+        /* Section title */
         .sectionTitle{
           margin: 20px 2px 14px;
         }
@@ -324,11 +288,13 @@ export default function App() {
           line-height: 1.6;
         }
 
+        /* Grid */
         .grid{
           display:grid;
           gap: 14px;
         }
 
+        /* Card */
         .card{
           border-radius: 18px;
           padding: 18px;
@@ -353,8 +319,6 @@ export default function App() {
           align-items: flex-start;
         }
 
-        .cardLeft{ min-width: 240px; } /* helps header layout, still wraps on small screens */
-
         .cardTitle{
           margin: 0;
           font-size: 18px;
@@ -367,7 +331,7 @@ export default function App() {
           line-height: 1.4;
         }
         .cardBody{
-          margin: 12px 0 0;
+          margin: 14px 0 0;
           line-height: 1.7;
           color: var(--muted);
         }
@@ -378,12 +342,12 @@ export default function App() {
           flex-wrap: wrap;
         }
 
+        /* Tags */
         .tags{
           display:flex;
           gap: 8px;
           flex-wrap: wrap;
           justify-content: flex-end;
-          max-width: 100%;
         }
         .tag{
           display:inline-flex;
@@ -399,44 +363,7 @@ export default function App() {
           white-space: nowrap;
         }
 
-        /* Optional teaser thumbnail */
-        .thumbWrap{
-          margin-top: 12px;
-          display: block;
-          position: relative;
-          border-radius: 14px;
-          overflow: hidden;
-          border: 1px solid rgba(15,23,42,0.10);
-          background: rgba(255,255,255,0.80);
-          box-shadow: 0 14px 32px rgba(15,23,42,0.10);
-          text-decoration: none;
-        }
-        .thumb{
-          width: 100%;
-          height: 112px;        /* small teaser */
-          object-fit: cover;
-          object-position: top;
-          display:block;
-          transition: transform 180ms ease, filter 180ms ease;
-        }
-        .thumbHint{
-          position: absolute;
-          right: 10px;
-          bottom: 10px;
-          padding: 6px 10px;
-          border-radius: 999px;
-          font-size: 12px;
-          font-weight: 700;
-          color: rgba(15,23,42,0.78);
-          background: rgba(255,255,255,0.85);
-          border: 1px solid rgba(15,23,42,0.10);
-          box-shadow: 0 10px 22px rgba(15,23,42,0.10);
-        }
-        .thumbWrap:hover .thumb{
-          transform: scale(1.02);
-          filter: saturate(1.05);
-        }
-
+        /* Buttons */
         .btn{
           display:inline-flex;
           align-items:center;
@@ -481,6 +408,7 @@ export default function App() {
           box-shadow: 0 14px 34px rgba(15,23,42,0.10);
         }
 
+        /* Footer */
         .footer{
           margin-top: 22px;
           color: rgba(15,23,42,0.58);
@@ -499,6 +427,7 @@ export default function App() {
           border-bottom-color: rgba(37,99,235,0.35);
         }
 
+        /* Responsive */
         @media (max-width: 760px){
           .heroGrid{
             grid-template-columns: 1fr;
@@ -510,7 +439,6 @@ export default function App() {
           .name{
             font-size: 38px;
           }
-          .thumb{ height: 108px; }
         }
       `}</style>
     </div>
