@@ -5,6 +5,8 @@ type LinkButtonProps = {
 };
 
 function LinkButton({ href, label, variant = "secondary" }: LinkButtonProps) {
+  const isMail = href.startsWith("mailto:");
+
   const base: React.CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
@@ -13,41 +15,52 @@ function LinkButton({ href, label, variant = "secondary" }: LinkButtonProps) {
     padding: "10px 14px",
     borderRadius: 12,
     textDecoration: "none",
-    fontWeight: 600,
+    fontWeight: 650,
     fontSize: 14,
     border: "1px solid transparent",
-    transition: "transform 120ms ease, background 120ms ease, border-color 120ms ease",
+    transition: "transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease",
     userSelect: "none",
+    whiteSpace: "nowrap",
   };
 
-  const styles: Record<string, React.CSSProperties> = {
+  const styles: Record<NonNullable<LinkButtonProps["variant"]>, React.CSSProperties> = {
     primary: {
       background: "#2563eb",
       color: "#ffffff",
       borderColor: "#2563eb",
+      boxShadow: "0 8px 20px rgba(37,99,235,0.22)",
     },
     secondary: {
-      background: "rgba(255,255,255,0.06)",
-      color: "rgba(255,255,255,0.92)",
-      borderColor: "rgba(255,255,255,0.14)",
+      background: "rgba(255,255,255,0.72)",
+      color: "rgba(17,24,39,0.92)",
+      borderColor: "rgba(17,24,39,0.10)",
+      boxShadow: "0 8px 20px rgba(17,24,39,0.06)",
     },
   };
+
+  const hoverBorder = variant === "primary" ? "#1d4ed8" : "rgba(17,24,39,0.16)";
+  const hoverBg = variant === "primary" ? "#1d4ed8" : "rgba(255,255,255,0.90)";
 
   return (
     <a
       href={href}
-      target={href.startsWith("mailto:") ? undefined : "_blank"}
-      rel={href.startsWith("mailto:") ? undefined : "noreferrer"}
+      target={isMail ? undefined : "_blank"}
+      rel={isMail ? undefined : "noreferrer"}
       style={{ ...base, ...styles[variant] }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)";
-        (e.currentTarget as HTMLAnchorElement).style.borderColor =
-          variant === "primary" ? "#2563eb" : "rgba(255,255,255,0.22)";
+        (e.currentTarget as HTMLAnchorElement).style.borderColor = hoverBorder;
+        (e.currentTarget as HTMLAnchorElement).style.background = hoverBg;
+        (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+          variant === "primary"
+            ? "0 10px 26px rgba(37,99,235,0.26)"
+            : "0 10px 26px rgba(17,24,39,0.08)";
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0px)";
-        (e.currentTarget as HTMLAnchorElement).style.borderColor =
-          variant === "primary" ? "#2563eb" : "rgba(255,255,255,0.14)";
+        (e.currentTarget as HTMLAnchorElement).style.borderColor = styles[variant].borderColor as string;
+        (e.currentTarget as HTMLAnchorElement).style.background = styles[variant].background as string;
+        (e.currentTarget as HTMLAnchorElement).style.boxShadow = styles[variant].boxShadow as string;
       }}
     >
       {label}
@@ -61,13 +74,14 @@ function Tag({ children }: { children: React.ReactNode }) {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        padding: "5px 10px",
+        padding: "6px 10px",
         borderRadius: 999,
         fontSize: 12,
-        fontWeight: 600,
-        color: "rgba(255,255,255,0.78)",
-        background: "rgba(255,255,255,0.06)",
-        border: "1px solid rgba(255,255,255,0.14)",
+        fontWeight: 650,
+        color: "rgba(17,24,39,0.72)",
+        background: "rgba(255,255,255,0.80)",
+        border: "1px solid rgba(17,24,39,0.10)",
+        boxShadow: "0 6px 16px rgba(17,24,39,0.05)",
       }}
     >
       {children}
@@ -81,35 +95,27 @@ type ProjectCardProps = {
   description: string;
   tags: string[];
   links?: { label: string; href: string }[];
-  // Optional: add screenshots later by placing images in /public and using screenshotSrc="/daily4u.png"
   screenshotSrc?: string;
 };
 
-function ProjectCard({
-  title,
-  subtitle,
-  description,
-  tags,
-  links = [],
-  screenshotSrc,
-}: ProjectCardProps) {
+function ProjectCard({ title, subtitle, description, tags, links = [], screenshotSrc }: ProjectCardProps) {
   return (
     <div
       style={{
         borderRadius: 18,
         padding: 18,
-        border: "1px solid rgba(255,255,255,0.14)",
-        background: "rgba(255,255,255,0.04)",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+        border: "1px solid rgba(17,24,39,0.10)",
+        background: "rgba(255,255,255,0.62)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        boxShadow: "0 18px 50px rgba(17,24,39,0.10)",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: 18, letterSpacing: 0.2 }}>
-            {title}
-          </h3>
+          <h3 style={{ margin: 0, fontSize: 18, letterSpacing: 0.1, color: "rgba(17,24,39,0.92)" }}>{title}</h3>
           {subtitle ? (
-            <div style={{ marginTop: 6, color: "rgba(255,255,255,0.72)", fontSize: 13 }}>
+            <div style={{ marginTop: 6, color: "rgba(17,24,39,0.60)", fontSize: 13, lineHeight: 1.4 }}>
               {subtitle}
             </div>
           ) : null}
@@ -131,15 +137,14 @@ function ProjectCard({
               width: "100%",
               height: "auto",
               borderRadius: 14,
-              border: "1px solid rgba(255,255,255,0.14)",
+              border: "1px solid rgba(17,24,39,0.10)",
+              boxShadow: "0 14px 34px rgba(17,24,39,0.10)",
             }}
           />
         </div>
       ) : null}
 
-      <p style={{ margin: "14px 0 0", lineHeight: 1.65, color: "rgba(255,255,255,0.86)" }}>
-        {description}
-      </p>
+      <p style={{ margin: "14px 0 0", lineHeight: 1.65, color: "rgba(17,24,39,0.78)" }}>{description}</p>
 
       {links.length ? (
         <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -153,35 +158,38 @@ function ProjectCard({
 }
 
 export default function App() {
+  // Base-aware CV link (works on GitHub Pages project site: /portfolio/)
+  const cvHref = `${import.meta.env.BASE_URL}CVMadni2.pdf`;
+
   return (
     <div
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(1200px 600px at 20% -10%, rgba(37,99,235,0.35), transparent 60%)," +
-          "radial-gradient(900px 500px at 90% 10%, rgba(16,185,129,0.20), transparent 55%)," +
-          "#0b0f17",
-        color: "rgba(255,255,255,0.92)",
+          "radial-gradient(1200px 700px at 15% -10%, rgba(37,99,235,0.16), transparent 60%)," +
+          "radial-gradient(900px 600px at 90% 0%, rgba(16,185,129,0.10), transparent 55%)," +
+          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 35%, #ffffff 100%)",
+        color: "rgba(17,24,39,0.92)",
       }}
     >
       <div
         style={{
           maxWidth: 980,
           margin: "0 auto",
-          padding: "52px 20px 44px",
+          padding: "56px 20px 44px",
           fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial",
         }}
       >
-        <header style={{ marginBottom: 26 }}>
+        <header style={{ marginBottom: 22 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
             <div>
-              <h1 style={{ margin: 0, fontSize: 38, letterSpacing: 0.2 }}>
+              <h1 style={{ margin: 0, fontSize: 40, letterSpacing: 0.2, color: "rgba(17,24,39,0.92)" }}>
                 Abdul Wahab Madni
               </h1>
-              <p style={{ margin: "10px 0 0", color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
+              <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.70)", lineHeight: 1.5 }}>
                 Frontend UX Developer — React/TypeScript + Drupal theming (Twig)
               </p>
-              <p style={{ margin: "10px 0 0", color: "rgba(255,255,255,0.65)", lineHeight: 1.6, maxWidth: 720 }}>
+              <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.66)", lineHeight: 1.65, maxWidth: 760 }}>
                 I combine front-end engineering (React, TypeScript, HTML/CSS, API integration) with UX research and design
                 (Figma, usability testing, design systems). I build accessible, performance-minded interfaces and have hands-on
                 Drupal theming experience through multiple Drupal projects.
@@ -189,9 +197,8 @@ export default function App() {
             </div>
 
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {/* Optional: Add your CV to /public as CV.pdf and enable this */}
-              <LinkButton href="/CVMadni2.pdf" label="Download CV" variant="primary" />
-              <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="primary" />
+              <LinkButton href={cvHref} label="Download CV" variant="primary" />
+              <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="secondary" />
               <LinkButton href="https://behance.net/wahab-madni" label="Behance" variant="secondary" />
               <LinkButton href="https://github.com/MadniAbdulWahab" label="GitHub" variant="secondary" />
               <LinkButton href="mailto:madniabdulwahab@gmail.com" label="Email" variant="secondary" />
@@ -205,11 +212,9 @@ export default function App() {
             subtitle="Theme customization • Templates • Local dev"
             description="January theme customization, Twig templates + preprocess hooks, libraries.yml asset management, and a reproducible DDEV + Composer/Drush workflow."
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
-            links={[
-              { label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" },
-            ]}
-            // Optional: add an image to /public and then set screenshotSrc="/daily4u.png"
-            // screenshotSrc="/daily4u.png"
+            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
+            // Optional: add an image in /public and enable below
+            // screenshotSrc={`${import.meta.env.BASE_URL}daily4u.png`}
           />
 
           <ProjectCard
@@ -217,9 +222,7 @@ export default function App() {
             subtitle="Research • Prototyping • Testing"
             description="Wireframes, prototypes, usability testing, and design system work."
             tags={["UX Research", "Figma", "Prototyping", "Usability Testing", "Design Systems"]}
-            links={[
-              { label: "Behance Portfolio", href: "https://behance.net/wahab-madni" },
-            ]}
+            links={[{ label: "Behance Portfolio", href: "https://behance.net/wahab-madni" }]}
           />
 
           <ProjectCard
@@ -230,11 +233,15 @@ export default function App() {
           />
         </section>
 
-        <footer style={{ marginTop: 26, color: "rgba(255,255,255,0.65)" }}>
+        <footer style={{ marginTop: 26, color: "rgba(17,24,39,0.58)" }}>
           Bonn, Germany •{" "}
           <a
             href="mailto:madniabdulwahab@gmail.com"
-            style={{ color: "rgba(255,255,255,0.85)", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.25)" }}
+            style={{
+              color: "rgba(17,24,39,0.82)",
+              textDecoration: "none",
+              borderBottom: "1px solid rgba(17,24,39,0.22)",
+            }}
           >
             madniabdulwahab@gmail.com
           </a>
