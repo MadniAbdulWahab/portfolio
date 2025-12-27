@@ -97,7 +97,7 @@ export default function App() {
   // Put screenshots in /public (full page screenshots are fine)
   // Example filenames (use your own):
   const daily4uShot = `${baseUrl}screenshots/home_full.png`;
-  //const unmsShot = `${baseUrl}unms-home.png`;
+  const unmsShot = `${baseUrl}blogs.png`;
 
   return (
     <div className="page">
