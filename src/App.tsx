@@ -128,7 +128,7 @@ export default function App() {
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
             // Optional screenshot:
-            // screenshotSrc={`${baseUrl}daily4u.png`}
+            screenshotSrc={`${baseUrl}screenshots/home_full.png`}
           />
 
           <ProjectCard
@@ -144,6 +144,22 @@ export default function App() {
             subtitle="Internal research platform"
             description="Research platform UI (upload → processing → results) with robust UI states and QA. Screenshots available on request."
             tags={["React", "TypeScript", "REST APIs", "UI States", "QA", "Accessibility"]}
+          />
+
+          {/* NEW PROJECT */}
+          <ProjectCard
+            title="University Notes Management System"
+            subtitle="Django web app • Auth • Upload/Download • Admin dashboard"
+            description="A web-based centralized platform for university students to upload, organize, search, and download academic notes. Includes user authentication, structured note organization (department/semester/subject), spam/abuse controls, and an admin dashboard for managing users and permissions."
+            tags={["Django", "Python", "Auth", "CRUD", "Admin", "Upload/Download"]}
+            links={[
+              {
+                label: "Repository",
+                href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem",
+              },
+            ]}
+            // Optional: if you add screenshots to /public later:
+            screenshotSrc={`${baseUrl}unms.png`}
           />
         </section>
 
