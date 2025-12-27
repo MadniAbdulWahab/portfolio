@@ -32,7 +32,7 @@ type ProjectCardProps = {
   tags: string[];
   links?: { label: string; href: string }[];
 
-  // Teaser thumbnail (cropped) and optional full image link
+  // Optional thumbnail teaser + optional full image link
   thumbnailSrc?: string;
   fullImageHref?: string;
 };
@@ -49,7 +49,7 @@ function ProjectCard({
   return (
     <article className="card">
       <div className="cardHeader">
-        <div>
+        <div className="cardLeft">
           <h3 className="cardTitle">{title}</h3>
           {subtitle ? <div className="cardSubtitle">{subtitle}</div> : null}
         </div>
@@ -61,6 +61,7 @@ function ProjectCard({
         </div>
       </div>
 
+      {/* Optional teaser screenshot */}
       {thumbnailSrc ? (
         <a
           className="thumbWrap"
@@ -94,21 +95,23 @@ export default function App() {
   const cvHref = `${baseUrl}CVMadni2.pdf`;
   const profileSrc = `${baseUrl}profile.jpeg`;
 
-  // Put screenshots in /public (full page screenshots are fine)
-  // Example filenames (use your own):
-  const daily4uShot = `${baseUrl}screenshots/home_full.png`;
-  const unmsShot = `${baseUrl}blogs.png`;
+  // Screenshots are OPTIONAL and OFF by default
+  const SHOW_SCREENSHOTS = false;
+
+  // If you want screenshots later, put files in /public and set SHOW_SCREENSHOTS = true
+  const daily4uShot = `${baseUrl}daily4u.png`;
+  const unmsShot = `${baseUrl}unms-home.png`;
 
   return (
     <div className="page">
       <div className="container">
-        {/* HERO */}
         <header className="hero">
           <div className="heroGrid">
             <div className="heroText">
               <h1 className="name">Abdul Wahab Madni</h1>
 
               <div className="roleRow">
+                {/* IMPORTANT: role pill can wrap now, so no horizontal overflow */}
                 <span className="role">Frontend UX Developer — React/TypeScript + Drupal theming (Twig)</span>
               </div>
 
@@ -133,7 +136,6 @@ export default function App() {
           </div>
         </header>
 
-        {/* SECTION TITLE */}
         <div className="sectionTitle">
           <h2>Featured work</h2>
           <p>Selected projects aligned with Frontend + UX + Drupal delivery.</p>
@@ -146,9 +148,8 @@ export default function App() {
             description="January theme customization, Twig templates + preprocess hooks, libraries.yml asset management, and a reproducible DDEV + Composer/Drush workflow."
             tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
-            // Teaser screenshot (small strip)
-            thumbnailSrc={daily4uShot}
-            fullImageHref={daily4uShot}
+            thumbnailSrc={SHOW_SCREENSHOTS ? daily4uShot : undefined}
+            fullImageHref={SHOW_SCREENSHOTS ? daily4uShot : undefined}
           />
 
           <ProjectCard
@@ -169,11 +170,11 @@ export default function App() {
           <ProjectCard
             title="University Notes Management System"
             subtitle="Django web app • Auth • Upload/Download • Admin dashboard"
-            description="A centralized platform for students to upload, organize (department/semester/subject), search, and download academic notes. Includes anti-abuse controls and admin management for users and permissions."
+            description="A centralized platform for students to upload, organize (department/semester/subject), search, and download academic notes. Includes anti-abuse controls and an admin dashboard for managing users and permissions."
             tags={["Django", "Python", "Auth", "CRUD", "Admin", "Upload/Download"]}
             links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
-            thumbnailSrc={unmsShot}
-            fullImageHref={unmsShot}
+            thumbnailSrc={SHOW_SCREENSHOTS ? unmsShot : undefined}
+            fullImageHref={SHOW_SCREENSHOTS ? unmsShot : undefined}
           />
         </section>
 
@@ -204,10 +205,16 @@ export default function App() {
 
         * { box-sizing: border-box; }
         html, body { height: 100%; }
-        body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; color: var(--text); }
+        body {
+          margin: 0;
+          font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+          color: var(--text);
+          overflow-x: hidden; /* Hard stop: prevents the "zoom out to see everything" problem */
+        }
 
         .page{
           min-height:100vh;
+          overflow-x: hidden;
           background:
             radial-gradient(1200px 700px at 12% -10%, rgba(37,99,235,0.18), transparent 60%),
             radial-gradient(900px 600px at 92% 0%, rgba(16,185,129,0.10), transparent 55%),
@@ -246,9 +253,12 @@ export default function App() {
 
         .roleRow{ margin-top: 10px; }
 
+        /* FIX: allow wrapping so it cannot force horizontal overflow */
         .role{
-          display:inline-flex;
-          align-items:center;
+          display:inline-block;
+          max-width: 100%;
+          white-space: normal;
+          word-break: break-word;
           padding: 8px 12px;
           border-radius: 999px;
           background: rgba(37,99,235,0.08);
@@ -256,7 +266,7 @@ export default function App() {
           color: rgba(15,23,42,0.78);
           font-weight: 650;
           font-size: 13px;
-          line-height: 1;
+          line-height: 1.3;
         }
 
         .summary{
@@ -343,6 +353,8 @@ export default function App() {
           align-items: flex-start;
         }
 
+        .cardLeft{ min-width: 240px; } /* helps header layout, still wraps on small screens */
+
         .cardTitle{
           margin: 0;
           font-size: 18px;
@@ -371,6 +383,7 @@ export default function App() {
           gap: 8px;
           flex-wrap: wrap;
           justify-content: flex-end;
+          max-width: 100%;
         }
         .tag{
           display:inline-flex;
@@ -386,7 +399,7 @@ export default function App() {
           white-space: nowrap;
         }
 
-        /* Thumbnail teaser */
+        /* Optional teaser thumbnail */
         .thumbWrap{
           margin-top: 12px;
           display: block;
@@ -400,11 +413,10 @@ export default function App() {
         }
         .thumb{
           width: 100%;
-          height: 120px;        /* teaser height */
-          object-fit: cover;    /* crops full-page screenshots nicely */
-          object-position: top; /* keeps the top of the webpage visible */
+          height: 112px;        /* small teaser */
+          object-fit: cover;
+          object-position: top;
           display:block;
-          filter: saturate(1.02);
           transition: transform 180ms ease, filter 180ms ease;
         }
         .thumbHint{
@@ -422,7 +434,7 @@ export default function App() {
         }
         .thumbWrap:hover .thumb{
           transform: scale(1.02);
-          filter: saturate(1.06);
+          filter: saturate(1.05);
         }
 
         .btn{
@@ -498,9 +510,7 @@ export default function App() {
           .name{
             font-size: 38px;
           }
-          .thumb{
-            height: 110px;
-          }
+          .thumb{ height: 108px; }
         }
       `}</style>
     </div>
