@@ -1,317 +1,159 @@
-import React from "react";
+import type { ReactNode } from 'react'
+import {
+  earlierWork,
+  education,
+  experience,
+  languages,
+  moreProjects,
+  profile,
+  projects,
+  skills,
+  type Link,
+  type Project,
+} from './content'
 
-type LinkButtonProps = {
-  href: string;
-  label: string;
-  variant?: "primary" | "secondary";
-};
-
-function LinkButton({ href, label, variant = "secondary" }: LinkButtonProps) {
-  const isMail = href.startsWith("mailto:");
-
-  const base: React.CSSProperties = {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding: "10px 14px",
-    borderRadius: 12,
-    textDecoration: "none",
-    fontWeight: 650,
-    fontSize: 14,
-    border: "1px solid transparent",
-    transition: "transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease",
-    userSelect: "none",
-    whiteSpace: "nowrap",
-  };
-
-  const styles: Record<NonNullable<LinkButtonProps["variant"]>, React.CSSProperties> = {
-    primary: {
-      background: "#2563eb",
-      color: "#ffffff",
-      borderColor: "#2563eb",
-      boxShadow: "0 8px 20px rgba(37,99,235,0.22)",
-    },
-    secondary: {
-      background: "rgba(255,255,255,0.72)",
-      color: "rgba(17,24,39,0.92)",
-      borderColor: "rgba(17,24,39,0.10)",
-      boxShadow: "0 8px 20px rgba(17,24,39,0.06)",
-    },
-  };
-
-  const hoverBorder = variant === "primary" ? "#1d4ed8" : "rgba(17,24,39,0.16)";
-  const hoverBg = variant === "primary" ? "#1d4ed8" : "rgba(255,255,255,0.90)";
-
+function ExternalLink({ href, children, className }: { href: string; children: ReactNode; className?: string }) {
+  const external = href.startsWith('http')
   return (
-    <a
-      href={href}
-      target={isMail ? undefined : "_blank"}
-      rel={isMail ? undefined : "noreferrer"}
-      style={{ ...base, ...styles[variant] }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)";
-        (e.currentTarget as HTMLAnchorElement).style.borderColor = hoverBorder;
-        (e.currentTarget as HTMLAnchorElement).style.background = hoverBg;
-        (e.currentTarget as HTMLAnchorElement).style.boxShadow =
-          variant === "primary"
-            ? "0 10px 26px rgba(37,99,235,0.26)"
-            : "0 10px 26px rgba(17,24,39,0.08)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0px)";
-        (e.currentTarget as HTMLAnchorElement).style.borderColor = styles[variant].borderColor as string;
-        (e.currentTarget as HTMLAnchorElement).style.background = styles[variant].background as string;
-        (e.currentTarget as HTMLAnchorElement).style.boxShadow = styles[variant].boxShadow as string;
-      }}
-    >
-      {label}
-    </a>
-  );
-}
-
-function Tag({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        padding: "6px 10px",
-        borderRadius: 999,
-        fontSize: 12,
-        fontWeight: 650,
-        color: "rgba(17,24,39,0.72)",
-        background: "rgba(255,255,255,0.80)",
-        border: "1px solid rgba(17,24,39,0.10)",
-        boxShadow: "0 6px 16px rgba(17,24,39,0.05)",
-      }}
-    >
+    <a href={href} className={className} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>
       {children}
-    </span>
-  );
+    </a>
+  )
 }
 
-type ProjectCardProps = {
-  title: string;
-  subtitle?: string;
-  description: string;
-  tags: string[];
-  links?: { label: string; href: string }[];
-  screenshotSrc?: string;
-};
-
-function ProjectCard({ title, subtitle, description, tags, links = [], screenshotSrc }: ProjectCardProps) {
+function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <div
-      style={{
-        borderRadius: 18,
-        padding: 18,
-        border: "1px solid rgba(17,24,39,0.10)",
-        background: "rgba(255,255,255,0.62)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        boxShadow: "0 18px 50px rgba(17,24,39,0.10)",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <h3 style={{ margin: 0, fontSize: 18, letterSpacing: 0.1, color: "rgba(17,24,39,0.92)" }}>{title}</h3>
-          {subtitle ? (
-            <div style={{ marginTop: 6, color: "rgba(17,24,39,0.60)", fontSize: 13, lineHeight: 1.4 }}>
-              {subtitle}
-            </div>
-          ) : null}
-        </div>
+    <section id={id} aria-labelledby={`${id}-title`}>
+      <h2 id={`${id}-title`}>{title}</h2>
+      {children}
+    </section>
+  )
+}
 
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
-          {tags.map((t) => (
-            <Tag key={t}>{t}</Tag>
-          ))}
-        </div>
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <article className="card">
+      <p className="kind">{project.kind}</p>
+      <h3>{project.title}</h3>
+      <p>{project.summary}</p>
+      <ul className="points">
+        {project.points.map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+      <ul className="tags" aria-label="Technologies">
+        {project.tech.map((t) => (
+          <li key={t}>{t}</li>
+        ))}
+      </ul>
+      <div className="card-links">
+        {project.links.map((link: Link) => (
+          <ExternalLink key={link.href} href={link.href} className="button small">
+            {link.label}
+          </ExternalLink>
+        ))}
       </div>
-
-      {screenshotSrc ? (
-        <div style={{ marginTop: 14 }}>
-          <img
-            src={screenshotSrc}
-            alt={`${title} screenshot`}
-            style={{
-              width: "100%",
-              height: "auto",
-              borderRadius: 14,
-              border: "1px solid rgba(17,24,39,0.10)",
-              boxShadow: "0 14px 34px rgba(17,24,39,0.10)",
-            }}
-          />
-        </div>
-      ) : null}
-
-      <p style={{ margin: "14px 0 0", lineHeight: 1.65, color: "rgba(17,24,39,0.78)" }}>{description}</p>
-
-      {links.length ? (
-        <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
-          {links.map((l) => (
-            <LinkButton key={l.href} href={l.href} label={l.label} variant="secondary" />
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+    </article>
+  )
 }
 
 export default function App() {
-  // Base-aware links (work on GitHub Pages project site: /portfolio/)
-  const baseUrl = import.meta.env.BASE_URL;
-  const cvHref = `${baseUrl}CVMadni2.pdf`;
-
-  // Put your image in: public/profile.jpg  (or change filename here)
-  const profileSrc = `${baseUrl}profile.jpeg`;
-
+  const photo = `${import.meta.env.BASE_URL}${profile.photo}`
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "radial-gradient(1200px 700px at 15% -10%, rgba(37,99,235,0.16), transparent 60%)," +
-          "radial-gradient(900px 600px at 90% 0%, rgba(16,185,129,0.10), transparent 55%)," +
-          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 35%, #ffffff 100%)",
-        color: "rgba(17,24,39,0.92)",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 980,
-          margin: "0 auto",
-          padding: "56px 20px 44px",
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial",
-        }}
-      >
-        <header style={{ marginBottom: 22 }}>
-          {/* Top section with image on the right */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr auto",
-              gap: 18,
-              alignItems: "start",
-            }}
-          >
-            <div>
-              <h1 style={{ margin: 0, fontSize: 40, letterSpacing: 0.2, color: "rgba(17,24,39,0.92)" }}>
-                Abdul Wahab Madni
-              </h1>
+    <>
+      <a className="skip" href="#projects">
+        Skip to projects
+      </a>
+      <header className="hero">
+        <div className="hero-text">
+          <h1>{profile.name}</h1>
+          <p className="headline">{profile.headline}</p>
+          <p className="intro">{profile.intro}</p>
+          <p className="location">{profile.location}</p>
+          <nav className="hero-links" aria-label="Profiles and contact">
+            {profile.links.map((link, i) => (
+              <ExternalLink key={link.href} href={link.href} className={i === 0 ? 'button primary' : 'button'}>
+                {link.label}
+              </ExternalLink>
+            ))}
+          </nav>
+        </div>
+        <img className="photo" src={photo} alt={`Portrait of ${profile.name}`} width={160} height={160} />
+      </header>
 
-              <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.70)", lineHeight: 1.5 }}>
-                Frontend UX Developer — React/TypeScript + Drupal theming (Twig)
-              </p>
-
-              <p style={{ margin: "10px 0 0", color: "rgba(17,24,39,0.66)", lineHeight: 1.65, maxWidth: 760 }}>
-                I combine front-end engineering (React, TypeScript, HTML/CSS, API integration) with UX research and design
-                (Figma, usability testing, design systems). I build accessible, performance-minded interfaces and have hands-on
-                Drupal theming experience through multiple Drupal projects.
-              </p>
-
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}>
-                <LinkButton href={cvHref} label="Download CV" variant="primary" />
-                <LinkButton href="https://linkedin.com/in/abdul-wahab-madni" label="LinkedIn" variant="secondary" />
-                <LinkButton href="https://behance.net/wahab-madni" label="Behance" variant="secondary" />
-                <LinkButton href="https://github.com/MadniAbdulWahab" label="GitHub" variant="secondary" />
-                <LinkButton href="mailto:madniabdulwahab@gmail.com" label="Email" variant="secondary" />
-              </div>
-            </div>
-
-            {/* Profile image (top-right) */}
-            <div
-              style={{
-                width: 124,
-                height: 124,
-                borderRadius: 18,
-                overflow: "hidden",
-                border: "1px solid rgba(17,24,39,0.10)",
-                background: "rgba(255,255,255,0.75)",
-                boxShadow: "0 18px 50px rgba(17,24,39,0.12)",
-              }}
-              aria-label="Profile photo"
-            >
-              <img
-                src={profileSrc}
-                alt="Abdul Wahab Madni"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            </div>
+      <main>
+        <Section id="projects" title="Selected projects">
+          <div className="grid">
+            {projects.map((project) => (
+              <ProjectCard key={project.title} project={project} />
+            ))}
           </div>
-        </header>
+          <p className="more">
+            Also on GitHub:{' '}
+            {moreProjects.map((p, i) => (
+              <span key={p.href}>
+                <ExternalLink href={p.href}>{p.label}</ExternalLink> ({p.note})
+                {i < moreProjects.length - 1 ? '; ' : '.'}
+              </span>
+            ))}
+          </p>
+        </Section>
 
-        <section style={{ display: "grid", gap: 14 }}>
-          <ProjectCard
-            title="Daily4U — Drupal Theming (Twig)"
-            subtitle="Theme customization • Templates • Local dev"
-            description="January theme customization, Twig templates + preprocess hooks, libraries.yml asset management, and a reproducible DDEV + Composer/Drush workflow."
-            tags={["Drupal", "Twig", "Preprocess", "libraries.yml", "DDEV", "Accessibility"]}
-            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/daily4u-site" }]}
-            // Optional: add an image in /public and enable below
-            // screenshotSrc={`${baseUrl}daily4u.png`}
-          />
+        <Section id="experience" title="Experience">
+          {experience.map((role) => (
+            <article className="role" key={role.title}>
+              <div className="role-head">
+                <h3>{role.title}</h3>
+                <p className="dates">{role.dates}</p>
+              </div>
+              <p className="org">{role.org}</p>
+              <ul className="points">
+                {role.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </Section>
 
-          <ProjectCard
-            title="UX Case Studies"
-            subtitle="Research • Prototyping • Testing"
-            description="Wireframes, prototypes, usability testing, and design system work."
-            tags={["UX Research", "Figma", "Prototyping", "Usability Testing", "Design Systems"]}
-            links={[{ label: "Behance Portfolio", href: "https://behance.net/wahab-madni" }]}
-          />
+        <Section id="skills" title="Skills">
+          <dl className="skills">
+            {skills.map((s) => (
+              <div key={s.group}>
+                <dt>{s.group}</dt>
+                <dd>{s.items.join(', ')}</dd>
+              </div>
+            ))}
+          </dl>
+        </Section>
 
-          <ProjectCard
-            title="Calibench — React/TypeScript UI"
-            subtitle="Internal research platform"
-            description="Research platform UI (upload → processing → results) with robust UI states and QA. Screenshots available on request."
-            tags={["React", "TypeScript", "REST APIs", "UI States", "QA", "Accessibility"]}
-          />
+        <Section id="education" title="Education and languages">
+          {education.map((e) => (
+            <div className="role-head" key={e.degree}>
+              <p>
+                <strong>{e.degree}</strong>, {e.school}
+              </p>
+              <p className="dates">{e.dates}</p>
+            </div>
+          ))}
+          <p className="languages">{languages}</p>
+        </Section>
+      </main>
 
-        <ProjectCard
-            title="University Notes Management System (UNMS)"
-            subtitle="Full-stack web app • Final-year project (Django)"
-            description="A centralized platform for students to upload, browse, and download academic notes—organized by department, semester, and subject. Includes authentication, note sharing with anti-abuse controls, user profiles, and an admin dashboard for user management and activity monitoring."
-            tags={["Django", "Python", "Authentication", "CRUD", "Admin Dashboard", "Cloud DB"]}
-            links={[{ label: "Repository", href: "https://github.com/MadniAbdulWahab/UniversityNotesManagementSystem" }]}
-            // Optional: add an image in /public and enable below
-            // screenshotSrc={`${baseUrl}unms.png`}
-          />
-        </section>
-
-        <footer style={{ marginTop: 26, color: "rgba(17,24,39,0.58)" }}>
-          Bonn, Germany •{" "}
-          <a
-            href="mailto:madniabdulwahab@gmail.com"
-            style={{
-              color: "rgba(17,24,39,0.82)",
-              textDecoration: "none",
-              borderBottom: "1px solid rgba(17,24,39,0.22)",
-            }}
-          >
-            madniabdulwahab@gmail.com
-          </a>
-        </footer>
-
-        {/* Mobile responsiveness (no extra CSS file): stack image below on small screens */}
-        <style>
-          {`
-            @media (max-width: 720px) {
-              header > div {
-                grid-template-columns: 1fr !important;
-              }
-              header img {
-                border-radius: 16px !important;
-              }
-            }
-          `}
-        </style>
-      </div>
-    </div>
-  );
+      <footer>
+        <p>
+          Earlier work:{' '}
+          {earlierWork.map((link, i) => (
+            <span key={link.href}>
+              <ExternalLink href={link.href}>{link.label}</ExternalLink>
+              {i < earlierWork.length - 1 ? ' and ' : '.'}
+            </span>
+          ))}
+        </p>
+        <p>
+          <ExternalLink href="mailto:madniabdulwahab@gmail.com">madniabdulwahab@gmail.com</ExternalLink> · {profile.location}
+        </p>
+      </footer>
+    </>
+  )
 }
